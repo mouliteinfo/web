@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moulin Info</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Lato', sans-serif;
+  background: #f0f4f8;
+  color: #222;
+  min-height: 100vh;
+}
+button { font-family: inherit; cursor: pointer; }
+img { max-width: 100%; display: block; }
+
+/* ===== HEADER ===== */
+header {
+  background: #fff;
+  border-bottom: 3px solid #1a1a2e;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.hd {
+  max-width: 1000px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  cursor: pointer;
+  user-select: none;
+}
+.logo .moulin { color: #29b6f6; }
+.logo .info   { color: #1a1a2e; }
+
+/* ===== HERO ===== */
+.hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  color: #fff;
+  text-align: center;
+  padding: 4rem 2rem 3.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #29b6f6, #0f3460, #29b6f6);
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  margin-bottom: .6rem;
+  letter-spacing: -1px;
+}
+.hero h1 .moulin { color: #29b6f6; }
+.hero p {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,.65);
+  font-style: italic;
+  font-weight: 300;
+}
+
+/* ===== LAYOUT ===== */
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 2.5rem;
+  padding: 2.5rem 1.5rem;
+}
+@media (max-width: 720px) { .page { grid-template-columns: 1fr; } }
+
+/* ===== ARTICLE CARDS ===== */
+.section-label {
+  font-size: .65rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #888;
+  font-weight: 700;
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: #ddd; }
+
+.card {
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  margin-bottom: 1.8rem;
+  overflow: hidden;
+  animation: fadeUp .45s ease both;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+.card-img { width: 100%; height: 220px; object-fit: cover; }
+.card-body { padding: 1.4rem; }
+.card-meta { display: flex; align-items: center; gap: .6rem; margin-bottom: .6rem; flex-wrap: wrap; }
+.cat {
+  background: #29b6f6;
+  color: #fff;
+  font-size: .6rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: .15rem .5rem;
+  font-weight: 700;
+  border-radius: 2px;
+}
+.date { font-size: .75rem; color: #999; }
+.card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.45rem;
+  line-height: 1.25;
+  margin-bottom: .5rem;
+  cursor: pointer;
+  color: #1a1a2e;
+  transition: color .2s;
+}
+.card h2:hover { color: #29b6f6; }
+.card-excerpt { color: #666; line-height: 1.7; font-size: .92rem; margin-bottom: 1rem; }
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+  padding-top: .8rem;
+  border-top: 1px solid #f0f0f0;
+}
+.read-btn {
+  background: none; border: none;
+  color: #1a1a2e; font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  border-bottom: 2px solid #29b6f6;
+  padding-bottom: 1px;
+  transition: color .2s;
+}
+.read-btn:hover { color: #29b6f6; }
+.cmt-badge { font-size: .75rem; color: #aaa; }
+.ed-btns { display: flex; gap: .4rem; }
+
+.no-posts { text-align: center; padding: 3rem; color: #aaa; font-style: italic; }
+
+/* ===== FULL ARTICLE ===== */
+#view-article { display: none; }
+.back {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: none; border: none;
+  font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: #888;
+  margin-bottom: 1.5rem;
+  transition: color .2s;
+}
+.back:hover { color: #1a1a2e; }
+.article-card {
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+.article-card img { width: 100%; max-height: 420px; object-fit: cover; }
+.article-body { padding: 1.8rem; }
+.full-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem,4vw,2.4rem);
+  line-height: 1.2;
+  margin-bottom: .8rem;
+  color: #1a1a2e;
+}
+.full-text { font-size: 1rem; line-height: 1.9; color: #333; white-space: pre-wrap; }
+.divider { border: none; border-top: 2px solid #1a1a2e; margin: 2rem 0; }
+
+/* ===== COMMENTS ===== */
+.cmt-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 1rem; color: #1a1a2e; }
+.cmt-form input, .cmt-form textarea {
+  width: 100%;
+  padding: .65rem .9rem;
+  border: 1px solid #ddd;
+  font-family: inherit; font-size: .9rem;
+  margin-bottom: .6rem; outline: none; resize: vertical;
+  background: #fafbfc;
+  transition: border-color .2s;
+  border-radius: 2px;
+}
+.cmt-form input:focus, .cmt-form textarea:focus { border-color: #29b6f6; }
+.cmt-item {
+  border-left: 3px solid #29b6f6;
+  padding: .7rem 1rem;
+  margin-bottom: .8rem;
+  background: #fafbfc;
+  border-radius: 0 2px 2px 0;
+}
+.cmt-author { font-weight: 700; font-size: .82rem; color: #1a1a2e; }
+.cmt-date { font-size: .7rem; color: #bbb; margin-left: .5rem; }
+.cmt-text { font-size: .88rem; color: #555; margin-top: .25rem; line-height: 1.6; }
+.no-cmt { font-size: .85rem; color: #bbb; font-style: italic; }
+
+/* ===== SIDEBAR ===== */
+.widget {
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  padding: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+.widget-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; color: #1a1a2e;
+  margin-bottom: .9rem;
+  padding-bottom: .5rem;
+  border-bottom: 2px solid #29b6f6;
+}
+.w-item {
+  padding: .5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: .85rem;
+  cursor: pointer;
+  color: #444;
+  transition: color .2s;
+}
+.w-item:last-child { border-bottom: none; }
+.w-item:hover { color: #29b6f6; }
+.w-item small { display: block; color: #bbb; font-size: .72rem; }
+.about-txt { font-size: .85rem; color: #666; line-height: 1.65; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: #1a1a2e;
+  color: rgba(255,255,255,.5);
+  text-align: center;
+  padding: 1.8rem;
+  font-size: .78rem;
+  letter-spacing: .5px;
+}
+footer strong { color: #29b6f6; font-family: 'Playfair Display', serif; font-size: 1rem; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: .42rem .95rem;
+  border: 2px solid #1a1a2e;
+  background: transparent;
+  font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .5px;
+  transition: all .2s; border-radius: 2px;
+  color: #1a1a2e;
+}
+.btn:hover { background: #1a1a2e; color: #fff; }
+.btn-blue { background: #29b6f6; border-color: #29b6f6; color: #fff; }
+.btn-blue:hover { background: #0288d1; border-color: #0288d1; }
+.btn-sm { padding: .2rem .55rem; font-size: .68rem; }
+.btn-danger { border-color: #e53935; color: #e53935; }
+.btn-danger:hover { background: #e53935; color: #fff; }
+
+/* =============================================
+   EDITOR PANEL — floating top-left
+   ============================================= */
+#ed-toggle {
+  position: fixed;
+  top: 12px; left: 12px;
+  z-index: 200;
+  background: #1a1a2e;
+  color: #29b6f6;
+  border: none;
+  font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: .4rem .75rem;
+  border-radius: 3px;
+  transition: background .2s;
+}
+#ed-toggle:hover { background: #29b6f6; color: #fff; }
+
+#ed-panel {
+  position: fixed;
+  top: 0; left: 0;
+  width: 320px; max-width: 95vw;
+  height: 100vh;
+  background: #fff;
+  border-right: 3px solid #1a1a2e;
+  z-index: 199;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 6px 0 30px rgba(0,0,0,.15);
+  transform: translateX(-110%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  overflow-y: auto;
+}
+#ed-panel.open { transform: translateX(0); }
+
+.ep-head {
+  background: #1a1a2e;
+  color: #fff;
+  padding: 1rem 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.ep-head span { font-family: 'Playfair Display', serif; font-size: 1.05rem; }
+.ep-head span em { color: #29b6f6; font-style: normal; }
+#ep-x { background: none; border: none; color: #aaa; font-size: 1.3rem; line-height: 1; }
+#ep-x:hover { color: #fff; }
+
+.ep-body { padding: 1.2rem; flex: 1; }
+
+/* login */
+#ep-login label {
+  display: block;
+  font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: #888; margin-bottom: .3rem; margin-top: .7rem;
+}
+#ep-login input {
+  width: 100%; padding: .6rem .8rem;
+  border: 1px solid #ddd; font-family: inherit; font-size: .9rem;
+  outline: none; border-radius: 2px; transition: border-color .2s;
+}
+#ep-login input:focus { border-color: #29b6f6; }
+#ep-login-err {
+  color: #e53935; font-size: .8rem;
+  margin: .5rem 0; display: none;
+}
+#ep-login .btn-blue { margin-top: .8rem; width: 100%; }
+
+/* publish form */
+#ep-pub { display: none; }
+#ep-pub label {
+  display: block;
+  font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: #888; margin-bottom: .3rem; margin-top: .8rem;
+}
+#ep-pub input[type="text"],
+#ep-pub textarea {
+  width: 100%; padding: .6rem .8rem;
+  border: 1px solid #ddd; font-family: inherit; font-size: .88rem;
+  outline: none; resize: vertical; border-radius: 2px;
+  background: #fafbfc; transition: border-color .2s;
+}
+#ep-pub input:focus, #ep-pub textarea:focus { border-color: #29b6f6; }
+#ep-pub textarea { min-height: 100px; }
+
+/* image upload */
+#img-btn {
+  width: 100%; padding: .85rem 1rem;
+  background: #fafbfc; border: 2px dashed #ccc;
+  font-family: inherit; font-size: .85rem; color: #666;
+  text-align: center; border-radius: 2px;
+  cursor: pointer; transition: border-color .2s, background .2s;
+  margin-top: .8rem;
+}
+#img-btn:hover { border-color: #29b6f6; background: #f0f8ff; }
+#img-file { display: none; }
+#img-url {
+  width: 100%; padding: .6rem .8rem;
+  border: 1px solid #ddd; font-family: inherit; font-size: .85rem;
+  outline: none; border-radius: 2px; margin-top: .3rem;
+  transition: border-color .2s;
+}
+#img-url:focus { border-color: #29b6f6; }
+#img-prev {
+  width: 100%; max-height: 150px; object-fit: cover;
+  border: 1px solid #ddd; border-radius: 2px;
+  margin-top: .6rem; display: none;
+}
+#img-del {
+  display: none; background: none; border: none;
+  color: #e53935; font-size: .78rem;
+  text-decoration: underline; margin-top: .3rem;
+}
+
+.ep-actions { display: flex; gap: .5rem; margin-top: 1rem; flex-wrap: wrap; }
+.ep-actions .btn-blue { flex: 1; }
+
+.ep-sep { border: none; border-top: 1px solid #eee; margin: 1.2rem 0; }
+</style>
+</head>
+<body>
+
+<!-- ===== EDITOR TOGGLE BUTTON ===== -->
+<button id="ed-toggle" onclick="togglePanel()">✏ Éditeur</button>
+
+<!-- ===== EDITOR PANEL ===== -->
+<div id="ed-panel">
+  <div class="ep-head">
+    <span><em>Moulin</em> Info — Éditeur</span>
+    <button id="ep-x" onclick="togglePanel()">✕</button>
+  </div>
+  <div class="ep-body">
+
+    <!-- LOGIN -->
+    <div id="ep-login">
+      <label>Identifiant</label>
+      <input type="text" id="ep-user" placeholder="editor" autocomplete="username">
+      <label>Mot de passe</label>
+      <input type="password" id="ep-pass" placeholder="••••••••" autocomplete="current-password">
+      <div id="ep-login-err">Identifiant ou mot de passe incorrect.</div>
+      <button class="btn btn-blue" onclick="doLogin()">Se connecter</button>
+    </div>
+
+    <!-- PUBLISH FORM -->
+    <div id="ep-pub">
+      <label>Titre *</label>
+      <input type="text" id="ep-title" placeholder="Titre de l'article">
+
+      <label>Catégorie</label>
+      <input type="text" id="ep-cat" placeholder="Culture, Politique...">
+
+      <label>Extrait</label>
+      <textarea id="ep-excerpt" rows="2" placeholder="Résumé court..."></textarea>
+
+      <label>Contenu *</label>
+      <textarea id="ep-content" rows="6" placeholder="Rédigez l'article ici..."></textarea>
+
+      <label>Image — depuis le téléphone / ordinateur</label>
+      <button id="img-btn" onclick="document.getElementById('img-file').click()">
+        📷 Choisir une photo
+      </button>
+      <input type="file" id="img-file" accept="image/*" onchange="onImg(event)">
+
+      <label style="margin-top:.6rem">— ou coller un lien URL</label>
+      <input type="text" id="img-url" placeholder="https://..." oninput="onUrl(this.value)">
+
+      <img id="img-prev" alt="">
+      <button id="img-del" onclick="clearImg()">✕ Supprimer la photo</button>
+
+      <div class="ep-actions">
+        <button class="btn btn-blue" onclick="publish()">Publier</button>
+        <button class="btn" id="ep-cancel" style="display:none" onclick="cancelEdit()">Annuler</button>
+      </div>
+
+      <hr class="ep-sep">
+      <button class="btn" style="width:100%" onclick="doLogout()">Déconnexion</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== BLOG ===== -->
+<header>
+  <div class="hd">
+    <span class="logo" onclick="goHome()">
+      <span class="moulin">Moulin</span><span class="info"> Info</span>
+    </span>
+  </div>
+</header>
+
+<div class="hero" id="hero">
+  <h1><span class="moulin">Moulin</span> Info</h1>
+  <p>Un espace pour les idées, les histoires et les réflexions qui méritent d'être lues.</p>
+</div>
+
+<div class="page">
+  <main>
+    <div id="view-home">
+      <div class="section-label">Articles récents</div>
+      <div id="posts"></div>
+    </div>
+    <div id="view-article"></div>
+  </main>
+
+  <aside>
+    <div class="widget">
+      <div class="widget-title">À propos</div>
+      <p class="about-txt">Moulin Info est un espace éditorial où nous partageons réflexions, chroniques et analyses sur l'actualité.</p>
+    </div>
+    <div class="widget">
+      <div class="widget-title">Articles récents</div>
+      <div id="sb-recent"></div>
+    </div>
+    <div class="widget">
+      <div class="widget-title">Catégories</div>
+      <div id="sb-cats"></div>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <strong>Moulin Info</strong><br>
+  Blog éditorial &copy; 2025 — Tous droits réservés
+</footer>
+
+<script>
+// ================================================
+//  STORAGE
+// ================================================
+const ARTS_KEY = 'moulin_arts';
+
+// Contraseña fija — siempre funciona
+const PASSWORD = 'blog2025';
+
+function loadArts() {
+  try { const s = localStorage.getItem(ARTS_KEY); return s ? JSON.parse(s) : []; }
+  catch(e) { return []; }
+}
+function saveArts() { localStorage.setItem(ARTS_KEY, JSON.stringify(arts)); }
+
+// ================================================
+//  STATE
+// ================================================
+let arts   = loadArts();
+let isEd   = false;
+let editId = null;
+let imgData = null;
+let curId  = null;
+
+// ================================================
+//  PANEL
+// ================================================
+function togglePanel() {
+  document.getElementById('ed-panel').classList.toggle('open');
+}
+
+// ================================================
+//  AUTH
+// ================================================
+function doLogin() {
+  const u = document.getElementById('ep-user').value.trim();
+  const p = document.getElementById('ep-pass').value;
+  if (u === 'editor' && p === PASSWORD) {
+    isEd = true;
+    document.getElementById('ep-login').style.display = 'none';
+    document.getElementById('ep-pub').style.display = 'block';
+    document.getElementById('ep-login-err').style.display = 'none';
+    render();
+  } else {
+    document.getElementById('ep-login-err').style.display = 'block';
+  }
+}
+function doLogout() {
+  isEd = false;
+  cancelEdit();
+  document.getElementById('ep-login').style.display = 'block';
+  document.getElementById('ep-pub').style.display = 'none';
+  document.getElementById('ep-user').value = '';
+  document.getElementById('ep-pass').value = '';
+  document.getElementById('ep-login-err').style.display = 'none';
+  render();
+  document.getElementById('ed-panel').classList.remove('open');
+}
+document.getElementById('ep-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// ================================================
+//  IMAGE — file upload
+// ================================================
+function onImg(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    imgData = ev.target.result;
+    document.getElementById('img-url').value = '';
+    document.getElementById('img-prev').src = imgData;
+    document.getElementById('img-prev').style.display = 'block';
+    document.getElementById('img-btn').textContent = '✔ ' + file.name;
+    document.getElementById('img-del').style.display = 'inline-block';
+  };
+  reader.readAsDataURL(file);
+}
+
+// IMAGE — URL
+function onUrl(val) {
+  const url = val.trim();
+  if (!url) { clearImg(); return; }
+  imgData = url;
+  document.getElementById('img-file').value = '';
+  document.getElementById('img-btn').textContent = '📷 Choisir une photo';
+  document.getElementById('img-prev').src = url;
+  document.getElementById('img-prev').style.display = 'block';
+  document.getElementById('img-del').style.display = 'inline-block';
+}
+
+function clearImg() {
+  imgData = null;
+  document.getElementById('img-file').value = '';
+  document.getElementById('img-url').value = '';
+  document.getElementById('img-prev').src = '';
+  document.getElementById('img-prev').style.display = 'none';
+  document.getElementById('img-btn').textContent = '📷 Choisir une photo';
+  document.getElementById('img-del').style.display = 'none';
+}
+
+// ================================================
+//  PUBLISH / EDIT
+// ================================================
+function publish() {
+  const title   = document.getElementById('ep-title').value.trim();
+  const cat     = document.getElementById('ep-cat').value.trim() || 'Général';
+  const excerpt = document.getElementById('ep-excerpt').value.trim();
+  const content = document.getElementById('ep-content').value.trim();
+  if (!title || !content) { alert('Le titre et le contenu sont obligatoires.'); return; }
+
+  if (editId !== null) {
+    const a = arts.find(x => x.id === editId);
+    if (a) {
+      a.title = title; a.category = cat;
+      a.excerpt = excerpt || title; a.content = content;
+      if (imgData) a.image = imgData;
+    }
+    editId = null;
+    document.getElementById('ep-cancel').style.display = 'none';
+  } else {
+    arts.unshift({
+      id: Date.now(), title, category: cat,
+      excerpt: excerpt || title, content,
+      image: imgData || '',
+      date: fmtDate(new Date()),
+      comments: []
+    });
+  }
+
+  // reset form
+  document.getElementById('ep-title').value = '';
+  document.getElementById('ep-cat').value = '';
+  document.getElementById('ep-excerpt').value = '';
+  document.getElementById('ep-content').value = '';
+  clearImg();
+  saveArts();
+  render();
+  togglePanel();
+  goHome();
+}
+
+function startEdit(id) {
+  const a = arts.find(x => x.id === id); if (!a) return;
+  editId = id;
+  document.getElementById('ep-title').value   = a.title;
+  document.getElementById('ep-cat').value     = a.category;
+  document.getElementById('ep-excerpt').value = a.excerpt;
+  document.getElementById('ep-content').value = a.content;
+  imgData = null;
+  if (a.image) {
+    document.getElementById('img-prev').src = a.image;
+    document.getElementById('img-prev').style.display = 'block';
+    document.getElementById('img-btn').textContent = '✔ Image actuelle (cliquez pour changer)';
+    document.getElementById('img-del').style.display = 'inline-block';
+  } else { clearImg(); }
+  document.getElementById('ep-cancel').sty
